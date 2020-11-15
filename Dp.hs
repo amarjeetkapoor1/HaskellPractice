@@ -25,23 +25,27 @@ solveM lst a b = map (map solve [0..] !! a) [0..] !! b
 
 
 solveWithoutRec:: [Int] -> (Int -> Int -> Int) -> Int -> Int -> Int
-solveWithoutRec x f a b
-    | b<a  = 0
-    | otherwise = 
-        let year = length x - (b-a+1)+1 ;
-            left = ((x !! a) * year) + f (a+1) b
-            right = ((x !! b) * year)  + f a (b-1) 
-                in if left > right then left else right
+solveWithoutRec x f a b 
+    | b == a  = (x !! a) * year
+    | otherwise = if left > right then left else right
+    where 
+        year = length x - (b-a+1)+1
+        left = ((x !! a) * year) + f (a+1) b
+        right = ((x !! b) * year)  + f a (b-1) 
+
 
 mem:: (Int -> a) -> (Int -> a)
 mem f = (map f [0 ..] !! )
 
 
-memSolveWithFix x  = fix $ mem . mem .solveWithoutRec x
+memSolveWithFix x  = fix $ mem . mem . solveWithoutRec x  -- Wrong solution as it seem it uses Memoization, but doesn't use Memoization
+
+memSolveWithFix' x  = fix (\ y -> mem . mem . solveWithoutRec x y)
 
 main = do 
-    putStrLn $ "Dp problem without Memoization" ++ show (solve [1,4,3,2] 0 3)
-    putStrLn $ "Dp problem with Memoization" ++ show (solveM [1,4,3,2] 0 3)
-    putStrLn $ "Dp problem with seperate Mem and recursion" ++ show (memSolveWithFix [1,4,3,2] 0 3)
+    putStrLn $ "Dp problem without Memoization" ++ show (solve [1,4,2,3] 0 3)
+    putStrLn $ "Dp problem with Memoization" ++ show (solveM [1,4,2,3] 0 3)
+    putStrLn $ "Dp problem with seperate Mem and recursion (Wrong solution as it seem it uses Memoization, but doesn't use Memoization)" ++ show (memSolveWithFix [1,4,2,3] 0 3)
+    putStrLn $ "Dp problem with seperate Mem and recursion" ++ show (memSolveWithFix' [1,4,2,3] 0 3)
 
 
